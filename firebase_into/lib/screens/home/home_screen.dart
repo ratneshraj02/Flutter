@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_into/auth/login_screen.dart';
 import 'package:firebase_into/screens/adduser/add_user.dart';
 import 'package:firebase_into/screens/updateUser/update_user_screen.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +14,25 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final dbRef = FirebaseFirestore.instance.collection('users');
+  FirebaseAuth auth = FirebaseAuth.instance;
+
+  void logoutNow() async {
+    try {
+      await auth.signOut();
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+        (value) => false,
+      );
+    } catch (err) {
+      final snackBar = SnackBar(
+        duration: Duration(seconds: 2),
+        backgroundColor: Colors.red,
+        content: Text(err.toString()),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +43,14 @@ class _HomePageState extends State<HomePage> {
           'Firebase Database',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              logoutNow();
+            },
+            icon: Icon(Icons.logout),
+          ),
+        ],
       ),
       body: StreamBuilder(
         stream: dbRef.snapshots(),
