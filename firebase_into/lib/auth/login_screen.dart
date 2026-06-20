@@ -3,6 +3,7 @@ import 'package:firebase_into/auth/forgot_password_screen.dart';
 import 'package:firebase_into/auth/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_into/screens/home/home_screen.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -38,6 +39,44 @@ class _LoginScreenState extends State<LoginScreen> {
           (value) => false,
         );
       } catch (err) {
+        final snackBar = SnackBar(content: Text(err.toString()));
+
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } finally {
+        setState(() {
+          loading = false;
+        });
+      }
+    }
+
+    void continueWithGoogle() async {
+      String webClientId =
+          '817521414735-4las3ahen64i9d18bm724la2p36qmdsj.apps.googleusercontent.com';
+      try {
+        GoogleSignIn signIn = GoogleSignIn.instance;
+        await signIn.initialize(serverClientId: webClientId);
+        GoogleSignInAccount account = await signIn.authenticate();
+        GoogleSignInAuthentication googleAuth = account.authentication;
+        final credential = GoogleAuthProvider.credential(
+          idToken: googleAuth.idToken,
+        );
+        setState(() {
+          loading = true;
+        });
+        await auth.signInWithCredential(credential);
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return HomePage();
+            },
+          ),
+          (value) => false,
+        );
+      } catch (err) {
+        final snackBar = SnackBar(content: Text(err.toString()));
+
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       } finally {
         setState(() {
           loading = false;
@@ -115,6 +154,21 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     label: Text("Login"),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      continueWithGoogle();
+                      
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    label: Text("Continue With Google"),
                   ),
                   const SizedBox(height: 20),
                   Row(
