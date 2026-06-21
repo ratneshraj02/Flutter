@@ -43,10 +43,17 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 60),
             TextFormField(
               controller: email,
-              validator: (value) {
+               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter email';
+                  return 'Please enter an email';
                 }
+
+                final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+
+                if (!emailRegex.hasMatch(value)) {
+                  return 'Enter a valid email';
+                }
+
                 return null;
               },
               decoration: InputDecoration(
@@ -59,10 +66,25 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 20),
             TextFormField(
               controller: password,
+              obscureText: true,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter the password';
+                  return 'Please enter a password';
                 }
+
+                final passwordRegex = RegExp(
+                  r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$',
+                );
+
+                if (!passwordRegex.hasMatch(value)) {
+                  return 'Password must contain:\n'
+                      '• 8+ characters\n'
+                      '• Uppercase letter\n'
+                      '• Lowercase letter\n'
+                      '• Number\n'
+                      '• Special character';
+                }
+
                 return null;
               },
               decoration: InputDecoration(

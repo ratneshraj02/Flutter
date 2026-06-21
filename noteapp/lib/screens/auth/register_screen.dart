@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:noteapp/providers/auth/my_auth_provider.dart';
 import 'package:noteapp/utils/router_helper.dart';
+import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -44,10 +46,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
             const SizedBox(height: 40),
             TextFormField(
               controller: name,
-              validator: (value) {
+               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter name';
+                  return 'Please enter an email';
                 }
+
+                final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+
+                if (!emailRegex.hasMatch(value)) {
+                  return 'Enter a valid email';
+                }
+
                 return null;
               },
               decoration: InputDecoration(
@@ -76,10 +85,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
             const SizedBox(height: 20),
             TextFormField(
               controller: password,
+              obscureText: true,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter the password';
+                  return 'Please enter a password';
                 }
+
+                final passwordRegex = RegExp(
+                  r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$',
+                );
+
+                if (!passwordRegex.hasMatch(value)) {
+                  return 'Password must contain:\n'
+                      '• 8+ characters\n'
+                      '• Uppercase letter\n'
+                      '• Lowercase letter\n'
+                      '• Number\n'
+                      '• Special character';
+                }
+
                 return null;
               },
               decoration: InputDecoration(
@@ -90,14 +114,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {}
+            Consumer<MyAuthProvider>(
+              builder: (context, provider, child) {
+                return provider.loading
+                    ? Center(child: CircularProgressIndicator())
+                    : ElevatedButton.icon(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            provider.register(
+                              name: name.text.trim(),
+                              email: email.text.trim(),
+                              password: password.text.trim(),
+                            );
+                          }
+                        },
+                        label: Text(
+                          "Register",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        icon: Icon(Icons.person, size: 30, color: Colors.black),
+                      );
               },
-              label: Text("Register", style: TextStyle(color: Colors.black)),
-              icon: Icon(Icons.person, size: 30, color: Colors.black),
             ),
-            const SizedBox(height: 30,),
+            const SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

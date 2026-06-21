@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:noteapp/models/note_model.dart';
 import 'package:noteapp/screens/addNote/add_note_screen.dart';
 import 'package:noteapp/screens/auth/forgot_password_screen.dart';
 import 'package:noteapp/screens/auth/login_screen.dart';
@@ -29,8 +30,10 @@ class RouterHelper {
     switch (settings.name) {
       case updateNote:
         {
-          final args = settings.arguments;
-          return MaterialPageRoute(builder: (context) => UpdateNoteScreen());
+          NoteModel note = settings.arguments as NoteModel;
+          return MaterialPageRoute(
+            builder: (context) => UpdateNoteScreen(note: note),
+          );
         }
     }
   }

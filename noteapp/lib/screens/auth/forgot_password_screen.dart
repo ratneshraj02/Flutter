@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:noteapp/providers/auth/my_auth_provider.dart';
+import 'package:provider/provider.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -8,7 +10,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  TextEditingController name = TextEditingController();
+  TextEditingController email = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -39,27 +41,43 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             ),
             const SizedBox(height: 30),
             TextFormField(
-              controller: name,
-              validator: (value) {
+              controller: email,
+               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter the name';
+                  return 'Please enter an email';
                 }
+
+                final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+
+                if (!emailRegex.hasMatch(value)) {
+                  return 'Enter a valid email';
+                }
+
                 return null;
               },
               decoration: InputDecoration(
-                hintText: "name",
+                hintText: "john@gmail.com",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
               ),
             ),
             const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {}
+            Consumer<MyAuthProvider>(
+              builder: (ctx, provider, child) {
+                return ElevatedButton.icon(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      provider.forgotPassword(email: email.text.trim());
+                    }
+                  },
+                  label: Text(
+                    "Reset password",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  icon: Icon(Icons.person, size: 30, color: Colors.black),
+                );
               },
-              label: Text("Reset password", style: TextStyle(color: Colors.black)),
-              icon: Icon(Icons.person, size: 30, color: Colors.black),
             ),
           ],
         ),
