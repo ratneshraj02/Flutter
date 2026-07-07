@@ -17,11 +17,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool isLoading = false;
 
+  bool hasAttemptedSubmit = false;
+
   String baseUrl = 'https://dummyjson.com/auth';
 
   void login() async {
     setState(() {
       isLoading = true;
+      hasAttemptedSubmit = true;
     });
     try {
       final response = await http.post(
@@ -38,12 +41,13 @@ class _LoginScreenState extends State<LoginScreen> {
         context,
         MaterialPageRoute(
           builder: (context) {
-            return ProfileScreen(token :token);
+            return ProfileScreen(token: token);
           },
         ),
       );
     } catch (err) {
-      print("Error : ${err.toString()}");
+      final snackBar = SnackBar(content: Text(err.toString()));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } finally {
       setState(() {
         isLoading = false;
@@ -54,54 +58,76 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Login", style: TextStyle(fontSize: 21))),
-      body: SafeArea(
-        child: Form(
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(title: Text("Login", style: TextStyle(fontSize: 21))),
+        body: Form(
           key: formKey,
-          child: Container(
-            padding: EdgeInsets.all(10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                TextFormField(
-                  controller: username,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Please enter valid username";
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(hintText: "username"),
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: password,
-                  validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return "Please enter email";
-                    return null;
-                  },
-                  decoration: InputDecoration(hintText: "password"),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    if (formKey.currentState!.validate()) {
+          autovalidateMode: hasAttemptedSubmit
+              ? AutovalidateMode.onUserInteraction
+              : AutovalidateMode.disabled,
+          child: Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 32),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 16,
+                children: [
+                  Text(
+                    "Welcome Back!",
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                  ),
+                  TextFormField(
+                    controller: username,
+                    textInputAction: TextInputAction.next,
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter valid username";
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(hintText: "emilys"),
+                  ),
+                  TextFormField(
+                    textInputAction: TextInputAction.done,
+                    controller: password,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter password";
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(hintText: "emilyspass"),
+                    onFieldSubmitted: (value) {
                       login();
-                    }
-                  },
-                  label: isLoading
-                      ? SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(),
-                        )
-                      : Text("Login"),
-                  icon: Icon(Icons.person),
-                ),
-              ],
+                    },
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 40,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (formKey.currentState!.validate()) {
+                          login();
+                        }
+                      },
+                      child: isLoading
+                          ? SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.black,
+                              ),
+                            )
+                          : Text("Login"),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

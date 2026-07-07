@@ -51,16 +51,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              widget.token = '';
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return LoginScreen();
-                  },
-                ),
-                (value) => false,
+              showModalBottomSheet(
+                context: context,
+                builder: (context) {
+                  return Container(
+                    padding: EdgeInsets.all(10),
+                    height: 100,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      spacing: 10,
+                      children: [
+                        Text("Are you sure logout!"),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text("No"),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                widget.token = '';
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) {
+                                      return LoginScreen();
+                                    },
+                                  ),
+                                  (value) => false,
+                                );
+                              },
+                              child: Text("Yes!"),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                },
               );
+              ;
             },
             icon: Icon(Icons.logout),
           ),
