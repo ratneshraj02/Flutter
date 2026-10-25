@@ -1,4 +1,25 @@
+import 'package:flutter/material.dart';
+
+import '../models/category_model.dart';
 import '../models/meal_model.dart';
+
+const List<CategoryModel> dummyCategories = [
+  CategoryModel(id: 'c1', title: 'Italian', color: Colors.orange),
+  CategoryModel(id: 'c2', title: 'Quick & Easy', color: Colors.blue),
+  CategoryModel(id: 'c3', title: 'Hamburgers', color: Colors.red),
+  CategoryModel(id: 'c4', title: 'German', color: Colors.green),
+  CategoryModel(id: 'c5', title: 'Light & Lovely', color: Colors.purple),
+  CategoryModel(id: 'c6', title: 'Exotic', color: Colors.teal),
+  CategoryModel(id: 'c7', title: 'Breakfast', color: Colors.pink),
+  CategoryModel(id: 'c8', title: 'Asian', color: Colors.indigo),
+  CategoryModel(id: 'c9', title: 'French', color: Colors.amber),
+  CategoryModel(id: 'c10', title: 'Summer', color: Colors.cyan),
+  CategoryModel(id: 'c11', title: 'Indian', color: Colors.deepOrange),
+  CategoryModel(id: 'c12', title: 'Desserts', color: Colors.brown),
+  CategoryModel(id: 'c13', title: 'Salads', color: Colors.lightGreen),
+  CategoryModel(id: 'c14', title: 'Seafood', color: Colors.blueGrey),
+  CategoryModel(id: 'c15', title: 'Vegan', color: Colors.lime),
+];
 
 final List<MealModel> dummyMeals = [
   const MealModel(
