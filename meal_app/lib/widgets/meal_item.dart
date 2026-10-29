@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:meal_app/models/meal_model.dart';
-import 'package:meal_app/screens/meal_details.dart';
 import 'package:meal_app/widgets/meal_item_trait.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class MealItem extends StatelessWidget {
   final MealModel meal;
   final void Function(MealModel meal) onSelectMeal;
-  const MealItem({super.key, required this.meal, required this.onSelectMeal});
+  final void Function(MealModel meal) onToggleFavorites;
+  const MealItem({
+    super.key,
+    required this.meal,
+    required this.onSelectMeal,
+    required this.onToggleFavorites,
+  });
 
   String get complexityText {
     return meal.complexity.name[0].toUpperCase() + meal.complexity.name.substring(1);
@@ -17,9 +22,15 @@ class MealItem extends StatelessWidget {
     return meal.affordability.name[0].toUpperCase() + meal.affordability.name.substring(1);
   }
 
+  /*
   void _nextScreen(BuildContext context, MealModel meal) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => MealDetails(meal: meal)));
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => MealDetails(meal: meal, onToggleFavorites: onToggleFavorites),
+      ),
+    );
   }
+  */
 
   @override
   Widget build(BuildContext context) {

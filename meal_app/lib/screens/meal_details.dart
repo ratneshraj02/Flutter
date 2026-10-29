@@ -1,15 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:meal_app/models/meal_model.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class MealDetails extends StatelessWidget {
   final MealModel meal;
-  const MealDetails({super.key, required this.meal});
+  final void Function(MealModel meal) onToggleFavorites;
+  const MealDetails({super.key, required this.meal, required this.onToggleFavorites});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(centerTitle: true, title: Text(meal.title, style: TextStyle(fontSize: 16))),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(meal.title, style: TextStyle(fontSize: 16)),
+        actions: [
+          IconButton(
+            onPressed: () {
+              onToggleFavorites(meal);
+            },
+            icon: Icon(true == true ? Icons.favorite : Icons.favorite_border),
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
